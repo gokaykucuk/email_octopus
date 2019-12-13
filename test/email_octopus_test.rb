@@ -35,7 +35,7 @@ class EmailOctopusTest < Minitest::Test
     list = EmailOctopus::List.find(ENV['TEST_LIST_ID'])
     # list.contacts
     begin
-      contact = list.create_contact(email_address: "test3@test.com")
+      contact = list.create_contact(email_address: "test@test.com")
       refute_nil contact.id
     rescue EmailOctopus::API::Error => e
       p "caught error"
@@ -57,7 +57,8 @@ class EmailOctopusTest < Minitest::Test
     list = EmailOctopus::List.find(ENV['TEST_LIST_ID'])
 
     old_count = list.contacts.count
-    list.contacts.last.destroy
+    contact = list.contacts.last
+    contact.destroy(list_id: ENV['TEST_LIST_ID'])
     new_count = list.contacts.count
 
     assert_equal((old_count - new_count), 1)
