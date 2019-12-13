@@ -15,6 +15,21 @@ class EmailOctopusTest < Minitest::Test
     assert_equal(ENV['TEST_LIST_ID'], list.id)
   end
 
+  def test_it_can_get_contacts
+    contacts = EmailOctopus::Contact.where(list_id: ENV['TEST_LIST_ID'])
+    assert !contacts.nil?
+  end
+
+  def test_it_can_get_subscribed_contacts
+    contacts = EmailOctopus::Contact.where(list_id: ENV['TEST_LIST_ID'], kind: 'subscribed')
+    assert !contacts.nil?
+  end
+
+  def test_it_can_get_unsubscribed_contacts
+    contacts = EmailOctopus::Contact.where(list_id: ENV['TEST_LIST_ID'], kind: 'unsubscribed')
+    assert !contacts.nil?
+  end
+
   def test_it_can_create_contacts
     # EmailOctopus::Contact.create(list_id:ENV['TEST_LIST_ID'], email_address: 'test@test.com')
     list = EmailOctopus::List.find(ENV['TEST_LIST_ID'])
@@ -23,7 +38,7 @@ class EmailOctopusTest < Minitest::Test
       contact = list.create_contact(email_address: "test3@test.com")
       refute_nil contact.id
     rescue EmailOctopus::API::Error => e
-			p "caught error"
+      p "caught error"
       assert true
     end
   end

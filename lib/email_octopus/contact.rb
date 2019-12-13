@@ -11,9 +11,11 @@ module EmailOctopus
     attribute :subscribed
     attribute :created_at
 
-    def self.where(list_id: '')
+    def self.where(list_id: '', kind: '')
       api = API.new EmailOctopus.config.api_key
-      api.get("/lists/#{list_id}/contacts", {}).body['data'].map do |params|
+      path = "/lists/#{list_id}/contacts"
+      path += "/#{kind}" unless kind.nil?
+      api.get(path, {}).body['data'].map do |params|
         new(params)
       end
     end
