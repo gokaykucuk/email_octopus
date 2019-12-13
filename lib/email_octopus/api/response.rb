@@ -24,7 +24,7 @@ module EmailOctopus
       end
 
       def error?
-        !success?
+        !success? || !body["error"].nil?
       end
 
       def body
@@ -33,17 +33,19 @@ module EmailOctopus
 
       def error_class
         return unless error?
-        case body['code']
+        case body['error']['code']
+        when 'MEMBER_EXISTS_WITH_EMAIL_ADDRESS'
+          EmailOctopus::API::Error::MemberExists
         when 'INVALID_PARAMETERS'
-          Error::InvalidParameters
+          EmailOctopus::API::Error::InvalidParameters
         when 'API_KEY_INVALID'
-          Error::ApiKeyInvalid
+          EmailOctopus::API::Error::ApiKeyInvalid
         when 'UNAUTHORISED'
-          Error::Unauthorized
+          EmailOctopus::API::Error::Unauthorized
         when 'NOT_FOUND'
-          Error::NotFound
+          EmailOctopus::API::Error::NotFound
         else
-          Error
+          EmailOctopus::API::Error
         end
       end
     end

@@ -18,6 +18,18 @@ module EmailOctopus
       end
     end
 
+    def self.find(id: '', list_id: '')
+      api = API.new EmailOctopus.config.api_key
+			params = api.get("/lists/#{list_id}/contacts/#{id}", {}).body
+			new(params)
+    end
+
+    def self.create(params = {})
+      api  = API.new EmailOctopus.config.api_key
+			resp = api.post("/lists/#{params[:list_id]}/contacts", params).body
+			new(resp)
+    end
+
     def as_json
       attributes.reject do |(key, _val)|
         /#{key.to_s}/ =~ 'list_id'

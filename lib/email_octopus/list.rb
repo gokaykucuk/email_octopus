@@ -12,7 +12,17 @@ module EmailOctopus
     end
 
     def create_contact(params = {})
-      Contact.create params.merge(list_id: attributes[:id])
+      Contact.create params.merge(list_id: id)
+    end
+
+    def self.find(list_id)
+      api    = API.new EmailOctopus.config.api_key
+      params = api.get("/lists/#{list_id}", {}).body
+			new(params)
+    end
+
+    def base_path
+      "/lists"
     end
 
   end
